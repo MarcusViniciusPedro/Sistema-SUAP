@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 
 /** Controller MVC: apresenta indicadores e devolve arquivos como resposta HTTP. */
@@ -24,13 +25,21 @@ public class RelatorioController {
         model.addAttribute("indicadores",consulta.indicadores());
         return "indicadores";
     }
+    // A tela de relatorios foi substituida pela pre-visualizacao. Mantemos a rota antiga apenas
+    // como redirecionamento para /relatorios/preview, preservando os filtros da query string, para
+    // nao deixar uma rota orfa acessivel somente digitando a URL.
     @GetMapping("/relatorios")
-    public String relatorios(@ModelAttribute FiltroChamadoDTO filtro,Model model) {
-        model.addAttribute("filtro",filtro);
-        model.addAttribute("chamados",consulta.consultar(filtro));
-        model.addAttribute("indicadores",consulta.indicadores(filtro));
-        return "relatorios";
+    public String relatorios(@ModelAttribute FiltroChamadoDTO filtro) {
+        var url=UriComponentsBuilder.fromPath("/relatorios/preview");
+        if(preenchido(filtro.getBusca()))url.queryParam("busca",filtro.getBusca());
+        if(preenchido(filtro.getStatus()))url.queryParam("status",filtro.getStatus());
+        if(preenchido(filtro.getCategoria()))url.queryParam("categoria",filtro.getCategoria());
+        if(preenchido(filtro.getPrioridade()))url.queryParam("prioridade",filtro.getPrioridade());
+        if(filtro.getInicio()!=null)url.queryParam("inicio",filtro.getInicio());
+        if(filtro.getFim()!=null)url.queryParam("fim",filtro.getFim());
+        return "redirect:"+url.build().encode().toUriString();
     }
+    private boolean preenchido(String valor){return valor!=null && !valor.isBlank();}
     // Tela de pre-visualizacao do relatorio: mostra o formulario de filtros, a previa dos chamados
     // filtrados, os totais do recorte e os botoes de download (CSV/Excel/PDF). Reutiliza os mesmos
     // servicos de consulta e indicadores; os downloads continuam usando /relatorios/exportar/{formato}.
