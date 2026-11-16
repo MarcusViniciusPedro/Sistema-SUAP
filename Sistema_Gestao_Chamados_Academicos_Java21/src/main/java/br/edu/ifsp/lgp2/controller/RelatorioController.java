@@ -31,6 +31,16 @@ public class RelatorioController {
         model.addAttribute("indicadores",consulta.indicadores(filtro));
         return "relatorios";
     }
+    // Tela de pre-visualizacao do relatorio: mostra o formulario de filtros, a previa dos chamados
+    // filtrados, os totais do recorte e os botoes de download (CSV/Excel/PDF). Reutiliza os mesmos
+    // servicos de consulta e indicadores; os downloads continuam usando /relatorios/exportar/{formato}.
+    @GetMapping("/relatorios/preview")
+    public String preview(@ModelAttribute FiltroChamadoDTO filtro,Model model) {
+        model.addAttribute("filtro",filtro);
+        model.addAttribute("chamados",consulta.consultar(filtro));
+        model.addAttribute("indicadores",consulta.indicadores(filtro));
+        return "relatorios-preview";
+    }
     @GetMapping("/relatorios/exportar/{formato}")
     public ResponseEntity<byte[]> exportar(@PathVariable String formato,@ModelAttribute FiltroChamadoDTO filtro) throws IOException {
         var registros=consulta.consultar(filtro);

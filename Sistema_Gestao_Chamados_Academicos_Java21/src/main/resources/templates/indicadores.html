@@ -1,4 +1,33 @@
 <!DOCTYPE html><html lang="pt-br" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Indicadores</title><link rel="stylesheet" href="/css/style.css"></head><body>
-<header><h1>Indicadores dos Chamados</h1><nav><a href="/chamados">Chamados</a><a href="/relatorios">Relatórios</a><form action="/logout" method="post"><button>Sair</button></form></nav></header>
+<header><h1>Indicadores dos Chamados</h1><nav><a href="/chamados">Chamados</a><a href="/relatorios/preview">Relatórios</a><form action="/logout" method="post"><button>Sair</button></form></nav></header>
 <section class="painel"><article class="card"><strong>Total</strong><p th:text="${indicadores.total}"></p></article><article class="card"><strong>Abertos</strong><p th:text="${indicadores.abertos}"></p></article><article class="card"><strong>Em análise</strong><p th:text="${indicadores.emAnalise}"></p></article><article class="card"><strong>Concluídos</strong><p th:text="${indicadores.concluidos}"></p></article><article class="card"><strong>Cancelados</strong><p th:text="${indicadores.cancelados}"></p></article><article class="card"><strong>Prioridade alta/urgente</strong><p th:text="${indicadores.altaPrioridade}"></p></article></section>
-<div class="card"><strong>Percentual concluído:</strong> <span th:text="${#numbers.formatDecimal(indicadores.percentualConcluido,1,1)} + '%'">0%</span></div></body></html>
+<div class="card"><strong>Percentual concluído:</strong> <span th:text="${#numbers.formatDecimal(indicadores.percentualConcluido,1,1)} + '%'">0%</span></div>
+<div class="card grafico"><strong>Totais por status</strong>
+<canvas id="graficoStatus" width="640" height="300" th:attr="data-abertos=${indicadores.abertos},data-emanalise=${indicadores.emAnalise},data-concluidos=${indicadores.concluidos},data-cancelados=${indicadores.cancelados}"></canvas></div>
+<script>
+// Grafico de barras desenhado com JS puro (sem CDN) a partir dos valores do servidor (IndicadoresDTO).
+// Le os totais dos atributos data-* do canvas e pinta uma barra por status usando a paleta verde.
+(function(){
+  var canvas=document.getElementById('graficoStatus');if(!canvas||!canvas.getContext)return;
+  var ctx=canvas.getContext('2d');
+  var dados=[
+    {rotulo:'Abertos',valor:+canvas.dataset.abertos||0,cor:'#92d050'},
+    {rotulo:'Em análise',valor:+canvas.dataset.emanalise||0,cor:'#5f9f2f'},
+    {rotulo:'Concluídos',valor:+canvas.dataset.concluidos||0,cor:'#1f4e2f'},
+    {rotulo:'Cancelados',valor:+canvas.dataset.cancelados||0,cor:'#0b5e20'}
+  ];
+  var larg=canvas.width,alt=canvas.height,base=alt-40,topo=20,areaBarras=larg-40;
+  var maximo=Math.max.apply(null,[1].concat(dados.map(function(d){return d.valor;})));
+  var passo=areaBarras/dados.length,barraLarg=passo*0.6;
+  ctx.clearRect(0,0,larg,alt);
+  ctx.strokeStyle='#ccc';ctx.beginPath();ctx.moveTo(30,base);ctx.lineTo(larg-10,base);ctx.stroke();
+  ctx.font='14px Arial';ctx.textAlign='center';
+  dados.forEach(function(d,i){
+    var x=30+i*passo+(passo-barraLarg)/2;
+    var altura=(d.valor/maximo)*(base-topo);
+    ctx.fillStyle=d.cor;ctx.fillRect(x,base-altura,barraLarg,altura);
+    ctx.fillStyle='#222';ctx.fillText(d.valor,x+barraLarg/2,base-altura-6);
+    ctx.fillText(d.rotulo,x+barraLarg/2,base+18);
+  });
+})();
+</script></body></html>
