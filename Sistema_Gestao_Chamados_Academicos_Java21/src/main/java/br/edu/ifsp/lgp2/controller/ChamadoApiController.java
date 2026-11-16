@@ -24,6 +24,10 @@ public class ChamadoApiController {
         if(dto.getTitulo()==null || dto.getTitulo().isBlank())return ResponseEntity.badRequest().build();
         return ResponseEntity.status(HttpStatus.CREATED).body(chamados.salvarNovoChamado(dto));
     }
+    /** Atualizacao completa via REST: reusa o Service e devolve 404 quando o id nao existe. */
+    @PutMapping("/{id}") public ResponseEntity<Chamado> atualizar(@PathVariable Long id,@RequestBody Chamado corpo){
+        corpo.setId(id);return ResponseEntity.of(java.util.Optional.ofNullable(chamados.atualizarChamado(corpo)));
+    }
     @PutMapping("/{id}/status") public ResponseEntity<Chamado> status(@PathVariable Long id,@RequestBody ChamadoAtualizacaoStatusDTO dto){
         dto.setId(id);return ResponseEntity.of(java.util.Optional.ofNullable(chamados.atualizarStatus(dto)));
     }
