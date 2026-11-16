@@ -18,8 +18,12 @@ import java.util.Map;
 /** Camada Service: concentra consultas dinâmicas e regras de indicadores. */
 @Service
 public class ConsultaService {
+
     private final ChamadoRepository repository;
-    public ConsultaService(ChamadoRepository repository) { this.repository = repository; }
+
+    public ConsultaService(ChamadoRepository repository) {
+        this.repository = repository;
+    }
 
     /** Cada filtro opcional gera um predicado AND; filtros vazios não restringem a consulta. */
     public List<Chamado> consultar(FiltroChamadoDTO filtro) {
@@ -55,18 +59,19 @@ public class ConsultaService {
     public IndicadoresDTO indicadores(FiltroChamadoDTO filtro) { return calcular(consultar(filtro)); }
 
     private IndicadoresDTO calcular(List<Chamado> itens) {
-        long abertos=contar(itens,"ABERTO");
-        long analise=contar(itens,"EM_ANALISE");
-        long concluidos=contar(itens,"CONCLUIDO");
-        long cancelados=contar(itens,"CANCELADO");
-        long altas=itens.stream().filter(c -> "ALTA".equals(c.getPrioridade()) || "URGENTE".equals(c.getPrioridade())).count();
-        double percentual=itens.isEmpty()?0:concluidos*100.0/itens.size();
-        List<ContagemRotulada> porCategoria=agruparPorCategoria(itens);
-        List<ContagemRotulada> porPrioridade=agruparPorPrioridade(itens);
+        long abertos = contar(itens, "ABERTO");
+        long analise = contar(itens, "EM_ANALISE");
+        long concluidos = contar(itens, "CONCLUIDO");
+        long cancelados = contar(itens, "CANCELADO");
+        long altas = contarPrioridade(itens, "ALTA") + contarPrioridade(itens, "URGENTE");
+        double percentual = itens.isEmpty() ? 0 : concluidos * 100.0 / itens.size();
+        List<ContagemRotulada> porCategoria = agruparPorCategoria(itens);
+        List<ContagemRotulada> porPrioridade = agruparPorPrioridade(itens);
         return new IndicadoresDTO(itens.size(), abertos, analise, concluidos, cancelados, altas, percentual,
                 porCategoria, porPrioridade);
     }
-    private long contar(List<Chamado> itens,String status) {
+
+    private long contar(List<Chamado> itens, String status) {
         return itens.stream().filter(c -> status.equals(c.getStatus())).count();
     }
 
@@ -96,7 +101,8 @@ public class ConsultaService {
         }
         return resultado;
     }
-    private long contarPrioridade(List<Chamado> itens,String prioridade) {
+
+    private long contarPrioridade(List<Chamado> itens, String prioridade) {
         return itens.stream().filter(c -> prioridade.equals(c.getPrioridade())).count();
     }
 }
