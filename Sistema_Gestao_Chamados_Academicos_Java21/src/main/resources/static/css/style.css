@@ -79,4 +79,26 @@ nav {display:flex;align-items:center;flex-wrap:wrap;gap:16px;} nav form, .acoes 
 .btn-link {background:none;border:0;padding:0;color:#0b5e20;text-decoration:underline;}
 .login {max-width:460px;margin:9vh auto;} .ajuda {color:#555;font-size:.9rem;}
 .acoes {min-width:230px;} .acoes a {margin-right:8px;}
-@media(max-width:720px){body{margin:14px;}table{display:block;overflow-x:auto;} }
+.grafico canvas {display:block;max-width:100%;margin-top:12px;}
+/* Layout do grafico de pizza: canvas ao lado da legenda. */
+.grafico-pizza {display:flex;align-items:center;flex-wrap:wrap;gap:24px;margin-top:12px;}
+.legenda {list-style:none;margin:0;padding:0;}
+.legenda li {display:flex;align-items:center;gap:8px;margin:6px 0;font-size:.95rem;}
+.legenda .cor {display:inline-block;width:16px;height:16px;border:1px solid #5f9f2f;}
+
+/* Pre-visualizacao do relatorio: imita uma folha A4 do arquivo que sera baixado. */
+.documento {background:#fff;color:#222;max-width:820px;margin:18px auto;padding:48px 56px;
+    border:1px solid #ccc;box-shadow:0 3px 14px rgba(0,0,0,.15);}
+.documento .doc-cabecalho {border-bottom:3px solid #1f4e2f;padding-bottom:12px;margin-bottom:18px;}
+.documento .doc-cabecalho h2 {color:#1f4e2f;margin:0;}
+.documento .doc-cabecalho .doc-sub {color:#555;font-size:.9rem;margin-top:4px;}
+.documento .doc-criterios {font-size:.9rem;margin:0 0 18px;}
+.documento .doc-criterios li {margin:2px 0;}
+.documento .doc-totais {display:flex;flex-wrap:wrap;gap:18px;font-size:.9rem;margin:14px 0 20px;
+    padding:10px 14px;background:#f2f8ec;border:1px solid #cfe3bd;}
+.documento table {margin-top:0;}
+.documento .doc-rodape {margin-top:22px;border-top:1px solid #ccc;padding-top:10px;
+    color:#777;font-size:.8rem;text-align:center;}
+.previa-aviso {max-width:820px;margin:0 auto;color:#555;font-size:.9rem;}
+@media(max-width:720px){body{margin:14px;}table{display:block;overflow-x:auto;}
+    .documento{padding:24px 18px;} }
