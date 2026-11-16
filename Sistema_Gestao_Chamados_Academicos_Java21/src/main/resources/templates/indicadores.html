@@ -3,10 +3,13 @@
 <section class="painel"><article class="card"><strong>Total</strong><p th:text="${indicadores.total}"></p></article><article class="card"><strong>Abertos</strong><p th:text="${indicadores.abertos}"></p></article><article class="card"><strong>Em análise</strong><p th:text="${indicadores.emAnalise}"></p></article><article class="card"><strong>Concluídos</strong><p th:text="${indicadores.concluidos}"></p></article><article class="card"><strong>Cancelados</strong><p th:text="${indicadores.cancelados}"></p></article><article class="card"><strong>Prioridade alta/urgente</strong><p th:text="${indicadores.altaPrioridade}"></p></article></section>
 <div class="card"><strong>Percentual concluído:</strong> <span th:text="${#numbers.formatDecimal(indicadores.percentualConcluido,1,1)} + '%'">0%</span></div>
 <div class="card grafico"><strong>Totais por status</strong>
-<canvas id="graficoStatus" width="640" height="300" th:attr="data-abertos=${indicadores.abertos},data-emanalise=${indicadores.emAnalise},data-concluidos=${indicadores.concluidos},data-cancelados=${indicadores.cancelados}"></canvas></div>
+<div class="grafico-pizza">
+<canvas id="graficoStatus" width="320" height="320" th:attr="data-abertos=${indicadores.abertos},data-emanalise=${indicadores.emAnalise},data-concluidos=${indicadores.concluidos},data-cancelados=${indicadores.cancelados}"></canvas>
+<ul id="legendaStatus" class="legenda"></ul>
+</div></div>
 <script>
-// Grafico de barras desenhado com JS puro (sem CDN) a partir dos valores do servidor (IndicadoresDTO).
-// Le os totais dos atributos data-* do canvas e pinta uma barra por status usando a paleta verde.
+// Grafico de pizza desenhado com JS puro (sem CDN) a partir dos valores do servidor (IndicadoresDTO).
+// Le os totais dos atributos data-* do canvas e pinta uma fatia por status usando a paleta verde.
 (function(){
   var canvas=document.getElementById('graficoStatus');if(!canvas||!canvas.getContext)return;
   var ctx=canvas.getContext('2d');
@@ -16,18 +19,39 @@
     {rotulo:'Concluídos',valor:+canvas.dataset.concluidos||0,cor:'#1f4e2f'},
     {rotulo:'Cancelados',valor:+canvas.dataset.cancelados||0,cor:'#0b5e20'}
   ];
-  var larg=canvas.width,alt=canvas.height,base=alt-40,topo=20,areaBarras=larg-40;
-  var maximo=Math.max.apply(null,[1].concat(dados.map(function(d){return d.valor;})));
-  var passo=areaBarras/dados.length,barraLarg=passo*0.6;
+  // Soma total das fatias; se tudo for zero desenhamos um circulo cinza vazio.
+  var total=dados.reduce(function(s,d){return s+d.valor;},0);
+  var larg=canvas.width,alt=canvas.height;
+  var cx=larg/2,cy=alt/2,raio=Math.min(larg,alt)/2-10;
   ctx.clearRect(0,0,larg,alt);
-  ctx.strokeStyle='#ccc';ctx.beginPath();ctx.moveTo(30,base);ctx.lineTo(larg-10,base);ctx.stroke();
-  ctx.font='14px Arial';ctx.textAlign='center';
-  dados.forEach(function(d,i){
-    var x=30+i*passo+(passo-barraLarg)/2;
-    var altura=(d.valor/maximo)*(base-topo);
-    ctx.fillStyle=d.cor;ctx.fillRect(x,base-altura,barraLarg,altura);
-    ctx.fillStyle='#222';ctx.fillText(d.valor,x+barraLarg/2,base-altura-6);
-    ctx.fillText(d.rotulo,x+barraLarg/2,base+18);
-  });
+  if(total<=0){
+    ctx.beginPath();ctx.arc(cx,cy,raio,0,Math.PI*2);ctx.fillStyle='#e0e0e0';ctx.fill();
+    ctx.fillStyle='#222';ctx.font='14px Arial';ctx.textAlign='center';
+    ctx.fillText('Sem dados',cx,cy);
+  } else {
+    // Cada fatia ocupa um angulo proporcional ao seu valor; comeca no topo (-90 graus).
+    var inicio=-Math.PI/2;
+    dados.forEach(function(d){
+      if(d.valor<=0)return;
+      var angulo=d.valor/total*Math.PI*2;
+      ctx.beginPath();ctx.moveTo(cx,cy);
+      ctx.arc(cx,cy,raio,inicio,inicio+angulo);ctx.closePath();
+      ctx.fillStyle=d.cor;ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      inicio+=angulo;
+    });
+  }
+  // Legenda com rotulo, valor absoluto e percentual de cada status.
+  var legenda=document.getElementById('legendaStatus');
+  if(legenda){
+    dados.forEach(function(d){
+      var pct=total>0?(d.valor/total*100):0;
+      var li=document.createElement('li');
+      var cor=document.createElement('span');cor.className='cor';cor.style.backgroundColor=d.cor;
+      li.appendChild(cor);
+      li.appendChild(document.createTextNode(d.rotulo+': '+d.valor+' ('+pct.toFixed(1)+'%)'));
+      legenda.appendChild(li);
+    });
+  }
 })();
 </script></body></html>
