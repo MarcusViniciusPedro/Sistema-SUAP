@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+    background-color: #f7f7f7;
+    color: #222;
+}
+
+h1 {
+    color: #1f4e2f;
+}
+
+a {
+    color: #0b5e20;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    background-color: white;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background-color: #92d050;
+    color: #000;
+}
+
+.mensagem-sucesso {
+    color: green;
+    font-weight: bold;
+}
+
+.mensagem-erro {
+    color: red;
+    font-weight: bold;
+}
+
+.card {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 18px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+input, textarea, select {
+    width: 100%;
+    max-width: 600px;
+    padding: 7px;
+    margin-top: 4px;
+    margin-bottom: 12px;
+}
+
+button {
+    background-color: #92d050;
+    border: 1px solid #5f9f2f;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Complementos de layout: mesma paleta verde e tabela da versão de referência. */
+header {display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+nav {display:flex;align-items:center;flex-wrap:wrap;gap:16px;} nav form, .acoes form {display:inline;margin:0;}
+.painel {display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;}
+.painel .card {margin:6px 0;} .painel .card p {font-size:1.8rem;margin:12px 0 0;color:#1f4e2f;}
+.filtros {display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;align-items:end;}
+.filtros input,.filtros select {max-width:100%;box-sizing:border-box;}
+.botao {display:inline-block;background:#92d050;padding:10px 14px;margin:4px;border:1px solid #5f9f2f;color:#000;}
+.btn-link {background:none;border:0;padding:0;color:#0b5e20;text-decoration:underline;}
+.login {max-width:460px;margin:9vh auto;} .ajuda {color:#555;font-size:.9rem;}
+.acoes {min-width:230px;} .acoes a {margin-right:8px;}
+@media(max-width:720px){body{margin:14px;}table{display:block;overflow-x:auto;} }

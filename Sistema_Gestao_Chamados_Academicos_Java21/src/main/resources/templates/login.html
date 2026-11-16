@@ -1,0 +1,6 @@
+<!DOCTYPE html><html lang="pt-br" xmlns:th="http://www.thymeleaf.org"><head><meta charset="UTF-8"><title>Entrar | Chamados</title><link rel="stylesheet" href="/css/style.css"></head>
+<body><main class="login card"><h1>Sistema de Gestão de Chamados Acadêmicos</h1><p>Acesso didático — LP2 / IFSP</p>
+<p class="mensagem-erro" th:if="${erro}" th:text="${erro}"></p>
+<form action="/login" method="post"><label>Usuário</label><input name="usuario" autocomplete="username" required>
+<label>Senha</label><input name="senha" type="password" autocomplete="current-password" required>
+<button type="submit">Entrar</button></form><p class="ajuda">Demonstração: admin / admin123</p></main></body></html>
