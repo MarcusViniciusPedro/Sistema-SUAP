@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cadastrar chamado</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+<h1>Cadastrar novo chamado</h1>
+
+<p>
+    <a href="/chamados">Voltar para a lista</a>
+</p>
+
+<p class="mensagem-erro" th:if="${mensagemErro}" th:text="${mensagemErro}"></p>
+
+<form th:action="@{/chamados/salvar}" th:object="${chamadoCadastroDTO}" method="post">
+
+    <p>
+        <label>Título:</label><br>
+        <input type="text" th:field="*{titulo}" required>
+    </p>
+
+    <p>
+        <label>Descrição:</label><br>
+        <textarea th:field="*{descricao}" rows="5" required></textarea>
+    </p>
+
+    <p>
+        <label>Categoria:</label><br>
+        <select th:field="*{categoria}" required>
+            <option value="">Selecione</option>
+            <option value="Suporte técnico">Suporte técnico</option>
+            <option value="Documentos">Documentos</option>
+            <option value="Matrícula">Matrícula</option>
+            <option value="Atendimento acadêmico">Atendimento acadêmico</option>
+        </select>
+    </p>
+
+    <button type="submit">Salvar</button>
+
+</form>
+
+</body>
+</html>
